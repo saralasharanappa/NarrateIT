@@ -29,9 +29,9 @@ class MainWindow extends JFrame {
 
     Story story;
     Character character;
-    List<Story> storyList;   // List of available stories
-    List<String> currentGameHistory; // Chapters from current game
-    List<String> overallHistory;     // All finished games' chapters
+    List<Story> storyList;            // List of available stories loaded from CSV
+    List<String> currentGameHistory;  // Chapters from current game
+    List<String> overallHistory;      // All finished games' chapters
 
     public MainWindow() {
         setTitle("Interactive Storytelling App");
@@ -40,14 +40,14 @@ class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Initialize stories, character, and histories
+        // Load stories from CSV; fallback to a hardcoded story if CSV not found.
         storyList = createStories();
-        story = storyList.get(0); // start with the first story (or randomize)
+        story = getRandomStory(); // load a random story at startup
         character = new Character("Hero", "Male", "Adventurer", new ArrayList<>());
         currentGameHistory = new ArrayList<>();
         overallHistory = new ArrayList<>();
 
-        // Create a persistent navigation bar at the top
+        // Create persistent navigation bar at the top
         navBar = createNavBar();
         add(navBar, BorderLayout.NORTH);
 
@@ -67,7 +67,6 @@ class MainWindow extends JFrame {
         mainPanel.add(historyPanel, "History");
 
         add(mainPanel, BorderLayout.CENTER);
-
         cardLayout.show(mainPanel, "MainMenu");
     }
 
@@ -84,7 +83,9 @@ class MainWindow extends JFrame {
         JButton newStoryButton = new JButton("New Story");
         newStoryButton.setToolTipText("Load a new random story");
         newStoryButton.addActionListener(e -> {
-            newRandomStory();
+            story = getRandomStory();
+            story.reset();
+            currentGameHistory.clear();
             storyPanel.updateStory();
             showPanel("Story");
         });
@@ -113,192 +114,37 @@ class MainWindow extends JFrame {
         return nav;
     }
 
-    // Create list of stories – here we extend the Forest story to 16 chapters.
+    // Loads stories from the CSV file using StoryLoader.
     private List<Story> createStories() {
-        List<Story> stories = new ArrayList<>();
-        stories.add(createForestStory());
-        stories.add(createSpaceStory());
-        stories.add(createMansionStory());
+        List<Story> stories = StoryLoader.loadStoriesFromCSV("stories.csv");
+        if (stories.isEmpty()) {
+            // Fallback to a hardcoded story if CSV load fails.
+            stories.add(createFallbackForestStory());
+        }
         return stories;
     }
 
-    // Extended Forest Adventure with 16 chapters and branching decisions.
-    private Story createForestStory() {
-        Story story = new Story();
-
-        Chapter ch1 = new Chapter("You wake up in a dark forest. What do you do?", "forest1.jpg");
-        ch1.setDecisions(Arrays.asList(
-                new Decision("Explore deeper", 1),
-                new Decision("Stay put", 2)
-        ));
-
-        Chapter ch2 = new Chapter("You venture deeper and discover a sparkling stream.", "forest2.jpg");
-        ch2.setDecisions(Arrays.asList(
-                new Decision("Drink water", 3),
-                new Decision("Follow the stream", 4)
-        ));
-
-        Chapter ch3 = new Chapter("Staying put, you sense a mysterious presence.", "forest3.jpg");
-        ch3.setDecisions(Arrays.asList(
-                new Decision("Investigate the presence", 5),
-                new Decision("Ignore it", 6)
-        ));
-
-        Chapter ch4 = new Chapter("The water rejuvenates you, filling you with vitality.", "forest4.jpg");
-        ch4.setDecisions(Arrays.asList(
-                new Decision("Set up camp", 7),
-                new Decision("Continue exploring", 8)
-        ));
-
-        Chapter ch5 = new Chapter("Your investigation leads you to ancient ruins.", "forest5.jpg");
-        ch5.setDecisions(Arrays.asList(
-                new Decision("Enter the ruins", 9),
-                new Decision("Examine from afar", 10)
-        ));
-
-        Chapter ch6 = new Chapter("Ignoring the presence, you fall asleep under the stars.", "forest6.jpg");
-        ch6.setDecisions(Arrays.asList(
-                new Decision("Wake up early", 11),
-                new Decision("Continue sleeping", 12)
-        ));
-
-        Chapter ch7 = new Chapter("At your camp, you find clues about a lost treasure.", "forest7.jpg");
-        // Both decisions lead to the deep finale.
-        ch7.setDecisions(Arrays.asList(
-                new Decision("Follow the clues", 15),
-                new Decision("Rest for the night", 15)
-        ));
-
-        Chapter ch8 = new Chapter("Exploring further, you encounter a wild animal.", "forest8.jpg");
-        ch8.setDecisions(Arrays.asList(
-                new Decision("Tame the animal", 15),
-                new Decision("Run away", 15)
-        ));
-
-        Chapter ch9 = new Chapter("At the stream, you find a hidden waterfall.", "forest9.jpg");
-        ch9.setDecisions(Arrays.asList(
-                new Decision("Approach the waterfall", 15),
-                new Decision("Collect water samples", 15)
-        ));
-
-        Chapter ch10 = new Chapter("Mysterious symbols carved in stone catch your eye.", "forest10.jpg");
-        ch10.setDecisions(Arrays.asList(
-                new Decision("Decode the symbols", 15),
-                new Decision("Ignore them", 15)
-        ));
-
-        Chapter ch11 = new Chapter("You discover an ancient artifact near the ruins.", "forest11.jpg");
-        ch11.setDecisions(Arrays.asList(
-                new Decision("Study the artifact", 15),
-                new Decision("Pocket it for later", 15)
-        ));
-
-        Chapter ch12 = new Chapter("A breathtaking sunrise fills the forest with golden light.", "forest12.jpg");
-        ch12.setDecisions(Arrays.asList(
-                new Decision("Begin a new path", 15),
-                new Decision("Stay and reflect", 15)
-        ));
-
-        Chapter ch13 = new Chapter("Dreams of legendary heroes stir your soul.", "forest13.jpg");
-        ch13.setDecisions(Arrays.asList(
-                new Decision("Embrace the dream", 15),
-                new Decision("Wake with resolve", 15)
-        ));
-
-        Chapter ch14 = new Chapter("The forest whispers ancient secrets as you tread lightly.", "forest14.jpg");
-        ch14.setDecisions(Arrays.asList(
-                new Decision("Listen closely", 15),
-                new Decision("Move on silently", 15)
-        ));
-
-        Chapter ch15 = new Chapter("Every step feels fated as mysterious forces guide you.", "forest15.jpg");
-        ch15.setDecisions(Arrays.asList(
-                new Decision("Follow your destiny", 15),
-                new Decision("Question the forces", 15)
-        ));
-
-        // Final chapter: no decisions – game ends.
-        Chapter ch16 = new Chapter("Your journey through the forest comes to an epic conclusion, full of wisdom and wonder. The adventure may end, but the memories will last forever.", "forest16.jpg");
-        // No decisions means this chapter is an ending.
-
-        story.addChapter(ch1);
-        story.addChapter(ch2);
-        story.addChapter(ch3);
-        story.addChapter(ch4);
-        story.addChapter(ch5);
-        story.addChapter(ch6);
-        story.addChapter(ch7);
-        story.addChapter(ch8);
-        story.addChapter(ch9);
-        story.addChapter(ch10);
-        story.addChapter(ch11);
-        story.addChapter(ch12);
-        story.addChapter(ch13);
-        story.addChapter(ch14);
-        story.addChapter(ch15);
-        story.addChapter(ch16);
-
-        return story;
-    }
-
-    // A simple Space Odyssey story (for brevity)
-    private Story createSpaceStory() {
-        Story story = new Story();
-        Chapter ch1 = new Chapter("You awaken aboard a drifting spaceship. What do you do?", "spaceship.jpg");
-        ch1.setDecisions(Arrays.asList(
-                new Decision("Explore the ship", 1),
-                new Decision("Send a distress signal", 2)
-        ));
-        Chapter ch2 = new Chapter("You encounter an alien lifeform with a mysterious aura.", "alien.jpg");
-        ch2.setDecisions(Arrays.asList(
-                new Decision("Engage with the alien", 3),
-                new Decision("Retreat to the control room", 4)
-        ));
-        Chapter ch3 = new Chapter("The alien shares secrets of the cosmos with you.", "cosmos.jpg");
-        ch3.setDecisions(Arrays.asList(
-                new Decision("Accept the wisdom", 4),
-                new Decision("Search for escape", 4)
-        ));
-        // Final chapter for Space Story.
-        Chapter ch4 = new Chapter("Your journey through the stars concludes as you are rescued. The universe awaits another adventure.", "rescue.jpg");
-        story.addChapter(ch1);
-        story.addChapter(ch2);
-        story.addChapter(ch3);
-        story.addChapter(ch4);
-        return story;
-    }
-
-    // A simple Mystery Mansion story (for brevity)
-    private Story createMansionStory() {
-        Story story = new Story();
-        Chapter ch1 = new Chapter("You arrive at an old mansion rumored to be haunted.", "mansion.jpg");
-        ch1.setDecisions(Arrays.asList(
-                new Decision("Enter the mansion", 1),
-                new Decision("Walk around the mansion", 2)
-        ));
-        Chapter ch2 = new Chapter("Inside, eerie sounds and flickering lights unsettle you.", "ghost.jpg");
-        ch2.setDecisions(Arrays.asList(
-                new Decision("Investigate the noise", 3),
-                new Decision("Retreat outside", 3)
-        ));
-        // Final chapter for Mansion Story.
-        Chapter ch3 = new Chapter("The mansion reveals its secrets slowly, leaving you with haunting memories.", "mansion_end.jpg");
-        story.addChapter(ch1);
-        story.addChapter(ch2);
-        story.addChapter(ch3);
-        return story;
-    }
-
-    // Load a new random story; also archive current game history if not empty.
-    public void newRandomStory() {
-        if (!currentGameHistory.isEmpty()) {
-            finishGame(); // Archive current game if it's in progress.
-        }
+    // Returns a random story from the loaded list.
+    Story getRandomStory() {
         Random rand = new Random();
         int index = rand.nextInt(storyList.size());
-        story = storyList.get(index);
-        story.reset();
-        currentGameHistory.clear();
+        return storyList.get(index);
+    }
+
+    // Fallback hardcoded story if CSV not found (must be at least 15 chapters).
+    private Story createFallbackForestStory() {
+        Story story = new Story();
+        for (int i = 1; i <= 16; i++) {
+            String text = "Fallback Chapter " + i + ": This is a fallback story chapter to ensure a deep narrative.";
+            String image = "forest" + i + ".jpg";
+            Chapter ch = new Chapter(text, image);
+            if (i < 16) {
+                // For simplicity, offer one decision to go to the next chapter.
+                ch.setDecisions(Arrays.asList(new Decision("Continue", i + 1)));
+            }
+            story.addChapter(ch);
+        }
+        return story;
     }
 
     // Record a chapter text in the current game's history.
@@ -376,13 +222,17 @@ class MainMenuPanel extends JPanel {
         titleLabel.setForeground(new Color(50, 50, 150));
         add(titleLabel, BorderLayout.CENTER);
 
-        // Start button to launch the adventure
+        // Start button to launch the adventure – loads a new random story.
         JButton startButton = new JButton("Start Your Adventure");
         startButton.setToolTipText("Begin the story");
         startButton.setFont(new Font("SansSerif", Font.PLAIN, 20));
         startButton.addActionListener(e -> {
-            mainWindow.showPanel("Story");
+            // On start, always load a new random story.
+            mainWindow.story = mainWindow.getRandomStory();
+            mainWindow.story.reset();
+            mainWindow.currentGameHistory.clear();
             mainWindow.recordChapterHistory(mainWindow.story.getCurrentChapter().getText());
+            mainWindow.showPanel("Story");
         });
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
@@ -439,10 +289,9 @@ class StoryPanel extends JPanel {
                         chapterText = "[Wizard Perspective] " + chapterText + " Mystical energies swirl around you.";
                         break;
                     case "Diplomat":
-                        chapterText = "[Diplomat Perspective] " + chapterText + " You carefully weigh the impact of every choice.";
+                        chapterText = "[Diplomat Perspective] " + chapterText + " You carefully weigh every decision.";
                         break;
                     default:
-                        // For 'Adventurer' or any other role, leave text as is.
                         break;
                 }
             }
