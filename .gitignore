@@ -57,4 +57,5 @@ buildNumber.properties
 
 # Savegame files
 savegame.ser
-
+.DS_Store
+src/.DS_Store
