@@ -9,9 +9,10 @@ class CustomizationPanel extends JPanel {
     JTextField nameField;
     JComboBox<String> genderCombo;
     JComboBox<String> roleCombo;
-    JTextField traitsField; // comma separated list
+    JTextField traitsField;
     JButton saveButton;
     JButton backButton;
+    JLabel previewLabel;
 
     public CustomizationPanel(MainWindow window) {
         this.mainWindow = window;
@@ -45,35 +46,26 @@ class CustomizationPanel extends JPanel {
         saveButton = new JButton("Save Customization");
         backButton = new JButton("Back to Menu");
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(nameLabel, gbc);
-        gbc.gridx = 1;
-        add(nameField, gbc);
+        previewLabel = new JLabel();
+        previewLabel.setFont(Theme.BODY_FONT);
+        updatePreview();
 
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        add(genderLabel, gbc);
-        gbc.gridx = 1;
-        add(genderCombo, gbc);
+        gbc.gridx = 0; gbc.gridy = 0; add(nameLabel, gbc);
+        gbc.gridx = 1; add(nameField, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        add(roleLabel, gbc);
-        gbc.gridx = 1;
-        add(roleCombo, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; add(genderLabel, gbc);
+        gbc.gridx = 1; add(genderCombo, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        add(traitsLabel, gbc);
-        gbc.gridx = 1;
-        add(traitsField, gbc);
+        gbc.gridx = 0; gbc.gridy = 2; add(roleLabel, gbc);
+        gbc.gridx = 1; add(roleCombo, gbc);
 
-        gbc.gridx = 0;
-        gbc.gridy = 4;
-        add(saveButton, gbc);
-        gbc.gridx = 1;
-        add(backButton, gbc);
+        gbc.gridx = 0; gbc.gridy = 3; add(traitsLabel, gbc);
+        gbc.gridx = 1; add(traitsField, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 4; add(saveButton, gbc);
+        gbc.gridx = 1; add(backButton, gbc);
+
+        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; add(previewLabel, gbc);
 
         saveButton.addActionListener(e -> saveCustomization());
         backButton.addActionListener(e -> mainWindow.showPanel("MainMenu"));
@@ -95,6 +87,13 @@ class CustomizationPanel extends JPanel {
         mainWindow.character.setGender(gender);
         mainWindow.character.setRole(role);
         mainWindow.character.setTraits(traits);
+        updatePreview();
         JOptionPane.showMessageDialog(this, "Character customization saved!");
+    }
+
+    private void updatePreview() {
+        String preview = String.format("Preview - Name: %s, Gender: %s, Role: %s, Traits: %s",
+                nameField.getText(), genderCombo.getSelectedItem(), roleCombo.getSelectedItem(), traitsField.getText());
+        previewLabel.setText(preview);
     }
 }

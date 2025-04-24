@@ -2,90 +2,100 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 class StoryPanel extends JPanel {
     MainWindow mainWindow;
     JTextArea storyTextArea;
     JPanel decisionPanel;
-    JLabel imageLabel; // Displays the chapter image
+    JLabel imageLabel;
 
     public StoryPanel(MainWindow window) {
         this.mainWindow = window;
-        setLayout(new BorderLayout());
-        setBackground(new Color(245, 245, 245));
 
-        // Image display at the top
+        // Layout with gradient background
+        setLayout(new BorderLayout());
+
+        // Gradient background rendering
+        setOpaque(false);
+
+        // Top optional chapter image
         imageLabel = new JLabel();
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(800, 200));
         add(imageLabel, BorderLayout.NORTH);
 
+        // Center story text area with padding
         storyTextArea = new JTextArea();
         storyTextArea.setLineWrap(true);
         storyTextArea.setWrapStyleWord(true);
         storyTextArea.setEditable(false);
         storyTextArea.setFont(new Font("Serif", Font.PLAIN, 20));
-        storyTextArea.setMargin(new Insets(10, 10, 10, 10));
+        storyTextArea.setMargin(new Insets(20, 20, 20, 20));
+        storyTextArea.setOpaque(false);
         JScrollPane scrollPane = new JScrollPane(storyTextArea);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollPane, BorderLayout.CENTER);
 
+        // Bottom decision buttons area
         decisionPanel = new JPanel();
         decisionPanel.setOpaque(false);
+        decisionPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         add(decisionPanel, BorderLayout.SOUTH);
 
         updateStory();
     }
 
+    // Override paintComponent to draw gradient
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        int width = getWidth();
+        int height = getHeight();
+        Color color1 = new Color(240, 248, 255);
+        Color color2 = new Color(220, 230, 250);
+        GradientPaint gp = new GradientPaint(0, 0, color1, 0, height, color2);
+        g2d.setPaint(gp);
+        g2d.fillRect(0, 0, width, height);
+        super.paintComponent(g);
+    }
+
     public void updateStory() {
-        // Get current chapter and update the UI accordingly
         Chapter currentChapter = mainWindow.story.getCurrentChapter();
         if (currentChapter != null) {
             String chapterText = currentChapter.getText();
-            // Modify perspective based on user role
             String role = mainWindow.character.getRole();
             if (role != null && !role.isEmpty()) {
                 switch (role) {
                     case "Warrior":
-                        chapterText = "[Warrior Perspective] " + chapterText + " You feel a surge of strength.";
+                        chapterText = "[Warrior] " + chapterText + " Strength courses through you.";
                         break;
                     case "Wizard":
-                        chapterText = "[Wizard Perspective] " + chapterText + " Mystical energies swirl around you.";
+                        chapterText = "[Wizard] " + chapterText + " You sense hidden magic.";
                         break;
                     case "Diplomat":
-                        chapterText = "[Diplomat Perspective] " + chapterText + " You carefully weigh every decision.";
-                        break;
-                    default:
+                        chapterText = "[Diplomat] " + chapterText + " Your mind weighs each word.";
                         break;
                 }
             }
             storyTextArea.setText(chapterText);
             mainWindow.recordChapterHistory(chapterText);
-            // Load and display image if available
+
             String imagePath = currentChapter.getImagePath();
             if (imagePath != null && !imagePath.isEmpty()) {
                 ImageIcon icon = new ImageIcon(imagePath);
-                Image img = icon.getImage().getScaledInstance(800, 300, Image.SCALE_SMOOTH);
+                Image img = icon.getImage().getScaledInstance(800, 200, Image.SCALE_SMOOTH);
                 imageLabel.setIcon(new ImageIcon(img));
             } else {
                 imageLabel.setIcon(null);
             }
+
             decisionPanel.removeAll();
             java.util.List<Decision> decisions = currentChapter.getDecisions();
             if (decisions != null && !decisions.isEmpty()) {
                 for (Decision d : decisions) {
-                    JButton decisionButton = new JButton(d.getText());
-                    decisionButton.setFont(new Font("SansSerif", Font.PLAIN, 16));
-                    decisionButton.setToolTipText("Choose this option");
-                    decisionButton.addMouseListener(new MouseAdapter() {
-                        Color original = decisionButton.getBackground();
-                        public void mouseEntered(MouseEvent e) {
-                            decisionButton.setBackground(new Color(180, 220, 250));
-                        }
-                        public void mouseExited(MouseEvent e) {
-                            decisionButton.setBackground(original);
-                        }
-                    });
+                    JButton decisionButton = createStyledDecisionButton(d.getText());
                     decisionButton.addActionListener(e -> {
                         mainWindow.story.advanceToChapter(d.getNextChapterIndex());
                         updateStory();
@@ -93,17 +103,48 @@ class StoryPanel extends JPanel {
                     decisionPanel.add(decisionButton);
                 }
             } else {
-                // If no decisions, show Finish Game button.
-                JButton finishButton = new JButton("Finish Game");
+                JButton finishButton = createStyledDecisionButton("🏁 Finish Game");
                 finishButton.addActionListener(e -> {
                     mainWindow.finishGame();
-                    JOptionPane.showMessageDialog(this, "Game Finished! Your journey has been recorded in History.");
+                    JOptionPane.showMessageDialog(this, "Game Finished! Check History.");
                     mainWindow.showPanel("MainMenu");
                 });
                 decisionPanel.add(finishButton);
             }
+
             decisionPanel.revalidate();
             decisionPanel.repaint();
         }
     }
+
+    private JButton createStyledDecisionButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 18)); // Larger font for visibility
+        button.setBackground(new Color(100, 180, 250)); // Base background color
+        button.setForeground(Color.WHITE); // Text color
+        button.setFocusPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Padding inside the button (top, left, bottom, right)
+        button.setBorder(BorderFactory.createEmptyBorder(15, 25, 15, 25));
+
+        // Make button stretch horizontally, with fixed height
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Hover effect - lighter blue when hovered
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(120, 200, 255)); // Lighter on hover
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(100, 180, 250)); // Original color
+            }
+        });
+
+        return button;
+    }
+
 }
+

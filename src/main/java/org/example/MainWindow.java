@@ -2,9 +2,9 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -22,25 +22,32 @@ class MainWindow extends JFrame {
 
     Story story;
     Character character;
-    java.util.List<Story> storyList;            // List of available stories loaded from CSV
-    java.util.List<String> currentGameHistory;  // Chapters from current game
-    java.util.List<String> overallHistory;      // All finished games' chapters
+    java.util.List<Story> storyList;
+    java.util.List<String> currentGameHistory;
+    java.util.List<String> overallHistory;
 
     public MainWindow() throws URISyntaxException {
+        // Set FlatLaf for modern UI
+        try {
+            UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+            // Uncomment for Dark Mode
+            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
         setTitle("Interactive Storytelling App");
         setSize(1100, 850);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Load stories from CSV; fallback to a hardcoded story if CSV not found.
         storyList = createStories();
-        story = getRandomStory(); // load a random story at startup
+        story = getRandomStory();
         character = new Character("Hero", "Male", "Adventurer", new ArrayList<>());
         currentGameHistory = new ArrayList<>();
         overallHistory = new ArrayList<>();
 
-        // Create persistent navigation bar at the top
         navBar = createNavBar();
         add(navBar, BorderLayout.NORTH);
 
@@ -53,106 +60,116 @@ class MainWindow extends JFrame {
         saveLoadPanel = new SaveLoadPanel(this);
         historyPanel = new HistoryPanel(this);
 
-//        mainPanel.add(wrapWithBackground(mainMenuPanel, getClass().getClassLoader().getResource("backgrounds/start.jpeg").getPath()), "MainMenu");
-        mainMenuPanel.setOpaque(false);
-        mainPanel.add(wrapWithBackground(mainMenuPanel, "backgrounds/start.jpeg"), "MainMenu");
+        mainPanel.add(wrapWithGradientBackground(mainMenuPanel), "MainMenu");
         mainPanel.add(storyPanel, "Story");
         mainPanel.add(customizationPanel, "Customization");
         mainPanel.add(saveLoadPanel, "SaveLoad");
-        mainPanel.add(wrapWithBackground(historyPanel, "backgrounds/start.jpeg"), "History");
-        mainPanel.setOpaque(false);
+        mainPanel.add(wrapWithGradientBackground(historyPanel), "History");
 
         add(mainPanel, BorderLayout.CENTER);
         cardLayout.show(mainPanel, "MainMenu");
     }
 
-    private JPanel wrapWithBackground(JPanel panel, String imagePath) {
-        try {
-            URL imageUrl = getClass().getClassLoader().getResource(imagePath);
-            System.out.println("Image URL: " + imageUrl);
-            if (imageUrl == null) {
-                System.err.println("Background image not found: " + imagePath);
-                return panel;
+    private JPanel wrapWithGradientBackground(JPanel panel) {
+        JPanel wrapper = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                int width = getWidth();
+                int height = getHeight();
+                Color color1 = new Color(240, 248, 255);
+                Color color2 = new Color(200, 220, 250);
+                GradientPaint gp = new GradientPaint(0, 0, color1, 0, height, color2);
+                g2d.setPaint(gp);
+                g2d.fillRect(0, 0, width, height);
             }
-
-            ImageIcon icon = new ImageIcon(imageUrl);
-            JLabel bgLabel = new JLabel(icon);
-            bgLabel.setLayout(new BorderLayout());
-            bgLabel.add(panel, BorderLayout.CENTER);
-
-            JPanel wrapper = new JPanel(new BorderLayout());
-            wrapper.add(bgLabel, BorderLayout.CENTER);
-            return wrapper;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return panel;
-        }
+        };
+        wrapper.add(panel, BorderLayout.CENTER);
+        return wrapper;
     }
 
-
-
-    // Creates the global top navigation bar
     private JPanel createNavBar() {
-        JPanel nav = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        nav.setBackground(new Color(200, 220, 240));
-        nav.setPreferredSize(new Dimension(1100, 50));
+        JPanel nav = new JPanel();
+//        nav.setLayout(new BoxLayout(nav, BoxLayout.X_AXIS));
+//        nav.setBackground(new Color(240, 245, 255));
+        nav.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 
-        JButton homeButton = new JButton("Home");
-        homeButton.setToolTipText("Go to Main Menu");
-        homeButton.addActionListener(e -> showPanel("MainMenu"));
-
-        JButton newStoryButton = new JButton("New Story");
-        newStoryButton.setToolTipText("Load a new random story");
-        newStoryButton.addActionListener(e -> {
+        // Modern styled buttons with icons
+        nav.add(createStyledNavButton("🏠 Home", e -> showPanel("MainMenu")));
+        nav.add(Box.createHorizontalStrut(15));
+        nav.add(createStyledNavButton("📖 New Story", e -> {
             story = getRandomStory();
             story.reset();
             currentGameHistory.clear();
             storyPanel.updateStory();
             showPanel("Story");
-        });
-
-        JButton customizationButton = new JButton("Customization");
-        customizationButton.setToolTipText("Customize your character");
-        customizationButton.addActionListener(e -> showPanel("Customization"));
-
-        JButton historyButton = new JButton("History");
-        historyButton.setToolTipText("View all games played");
-        historyButton.addActionListener(e -> {
+        }));
+        nav.add(Box.createHorizontalStrut(15));
+        nav.add(createStyledNavButton("🎨 Customization", e -> showPanel("Customization")));
+        nav.add(Box.createHorizontalStrut(15));
+        nav.add(createStyledNavButton("🕒 History", e -> {
             historyPanel.updateHistory();
             showPanel("History");
-        });
-
-        JButton saveGameButton = new JButton("Save Game");
-        saveGameButton.setToolTipText("Save your current progress");
-        saveGameButton.addActionListener(e -> saveGame());
-
-        nav.add(homeButton);
-        nav.add(newStoryButton);
-        nav.add(customizationButton);
-        nav.add(historyButton);
-        nav.add(saveGameButton);
+        }));
+        nav.add(Box.createHorizontalStrut(15));
+        nav.add(createStyledNavButton("💾 Save Game", e -> saveGame()));
 
         return nav;
     }
 
-    // Loads stories from the CSV file using StoryLoader.
+    private JButton createStyledNavButton(String text, ActionListener action) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        button.setForeground(new Color(50, 50, 100));
+        button.setBackground(new Color(220, 230, 250));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(50, 50, 20, 20));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setBorder(BorderFactory.createLineBorder(new Color(220, 230, 250), 10, true));
+        button.addActionListener(action);
+
+        // Hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(220, 230, 250));
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(220, 230, 250));
+            }
+        });
+
+        return button;
+    }
+
+
+    private JButton createNavButton(String text, String tooltip, ActionListener action) {
+        JButton button = new JButton(text);
+        button.setToolTipText(tooltip);
+        button.setFont(new Font("SansSerif", Font.BOLD, 14));
+        button.setBackground(new Color(180, 220, 250));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1, true));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.addActionListener(action);
+        return button;
+    }
+
     private java.util.List<Story> createStories() {
         java.util.List<Story> stories = StoryLoader.loadStoriesFromCSV("stories.csv");
         if (stories.isEmpty()) {
-            // Fallback to a hardcoded story if CSV load fails.
             stories.add(createFallbackForestStory());
         }
         return stories;
     }
 
-    // Returns a random story from the loaded list.
     Story getRandomStory() {
         Random rand = new Random();
         int index = rand.nextInt(storyList.size());
         return storyList.get(index);
     }
 
-    // Fallback hardcoded story if CSV not found (must be at least 15 chapters).
     private Story createFallbackForestStory() {
         Story story = new Story();
         for (int i = 1; i <= 16; i++) {
@@ -160,7 +177,6 @@ class MainWindow extends JFrame {
             String image = "forest" + i + ".jpg";
             Chapter ch = new Chapter(text, image);
             if (i < 16) {
-                // For simplicity, offer one decision to go to the next chapter.
                 ch.setDecisions(Arrays.asList(new Decision("Continue", i + 1)));
             }
             story.addChapter(ch);
@@ -168,17 +184,14 @@ class MainWindow extends JFrame {
         return story;
     }
 
-    // Record a chapter text in the current game's history.
     public void recordChapterHistory(String chapterText) {
         currentGameHistory.add(chapterText);
     }
 
-    // Get overall history (combined finished games).
     public java.util.List<String> getOverallHistory() {
         return overallHistory;
     }
 
-    // Finish the current game: archive its chapters in overall history.
     public void finishGame() {
         overallHistory.add("=== Game Start ===");
         overallHistory.addAll(currentGameHistory);
@@ -186,12 +199,10 @@ class MainWindow extends JFrame {
         currentGameHistory.clear();
     }
 
-    // Navigate to a specific panel.
     public void showPanel(String panelName) {
         cardLayout.show(mainPanel, panelName);
     }
 
-    // Save game state using serialization.
     public void saveGame() {
         try {
             FileOutputStream fileOut = new FileOutputStream("savegame.ser");
@@ -209,7 +220,6 @@ class MainWindow extends JFrame {
         }
     }
 
-    // Load game state using serialization.
     public void loadGame() {
         try {
             FileInputStream fileIn = new FileInputStream("savegame.ser");
