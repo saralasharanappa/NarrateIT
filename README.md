@@ -97,12 +97,26 @@ interactive-story-app/
 
 ```mermaid
 classDiagram
+    class MainWindow {
+        - Story story
+        - Character character
+        - List~Story~ storyList
+        - List~String~ currentGameHistory
+        - List~String~ overallHistory
+        + showPanel(String)
+        + saveGame()
+        + loadGame()
+        + recordChapterHistory(String)
+        + getOverallHistory()
+        + finishGame()
+    }
+
     class Story {
         - List~Chapter~ chapters
         - int currentChapterIndex
+        + addChapter(Chapter)
         + getCurrentChapter()
-        + addChapter(Chapter c)
-        + advanceToChapter(int index)
+        + advanceToChapter(int)
         + reset()
     }
 
@@ -111,9 +125,10 @@ classDiagram
         - String imagePath
         - List~Decision~ decisions
         + getText()
-        + getImagePath()
+        + setDecisions(List~Decision~)
         + getDecisions()
-        + setDecisions(List~Decision~ decisions)
+        + getImagePath()
+        + setImagePath(String)
     }
 
     class Decision {
@@ -128,29 +143,20 @@ classDiagram
         - String gender
         - String role
         - List~String~ traits
-        + getName(), setName()
-        + getGender(), setGender()
-        + getRole(), setRole()
-        + getTraits(), setTraits()
+        + getName()
+        + setName(String)
+        + getGender()
+        + setGender(String)
+        + getRole()
+        + setRole(String)
+        + getTraits()
+        + setTraits(List~String~)
     }
 
-    class MainWindow {
-        - Story story
-        - Character character
-        - List~Story~ storyList
-        - List~String~ currentGameHistory
-        - List~String~ overallHistory
-        + showPanel(String name)
-        + saveGame()
-        + loadGame()
-        + newRandomStory()
-        + finishGame()
-    }
-
-    Story --> Chapter
-    Chapter --> Decision
     MainWindow --> Story
     MainWindow --> Character
+    Story --> Chapter
+    Chapter --> Decision
 ```
 
 ---
