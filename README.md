@@ -208,7 +208,7 @@ mvn clean install
 ### 3. Run the Application
 
 ```bash
-mvn exec:java -Dexec.mainClass="org.example.InteractiveStoryApp"
+mvn exec:java -Dexec.mainClass="neu.csye6200.edu.InteractiveStoryApp"
 ```
 
 ### 4. Verify CSV Placement
