@@ -226,7 +226,7 @@ The character’s role affects how the story is narrated (e.g., Warriors receive
 
 ---
 
-# Functionalities for Milestone 2:
+# Functionalities:
 - Implement story loading from CSV files (15+ stories with 30 chapters each).
 - Display chapter narratives with branching decisions.
 - Character customization (name, gender, role, traits).
