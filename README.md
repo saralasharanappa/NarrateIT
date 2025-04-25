@@ -68,27 +68,30 @@ interactive-story-app/
 │       ├── java/
 │       │   └── neu/
 │       │       └── csye6200/
-│       │           └── edu/
-│       │               ├── InteractiveStoryApp.java
-│       │               ├── ui/
-│       │               │   ├── MainWindow.java
-│       │               │   ├── MainMenuPanel.java
-│       │               │   ├── StoryPanel.java
-│       │               │   ├── CustomizationPanel.java
-│       │               │   ├── SaveLoadPanel.java
-│       │               │   └── HistoryPanel.java
-│       │               ├── model/
-│       │               │   ├── Story.java
-│       │               │   ├── Chapter.java
-│       │               │   ├── Decision.java
-│       │               │   └── Character.java
-│       │               └── util/
-│       │                   └── StoryLoader.java
-│       └── resources/
-│           ├── backgrounds/
-│           │   ├── start.jpg
-│           │   └── end.jpg
-│           └── stories.csv    
+│       │           ├── InteractiveStoryApp.java
+│       │           ├── controller/
+│       │           │   ├── MainWindow.java
+│       │           │   └── StoryLoader.java
+│       │           ├── model/
+│       │           │   ├── Story.java
+│       │           │   ├── Chapter.java
+│       │           │   ├── Decision.java
+│       │           │   └── Character.java
+│       │           └── view/
+│       │               ├── MainMenuPanel.java
+│       │               ├── StoryPanel.java
+│       │               ├── CustomizationPanel.java
+│       │               ├── SaveLoadPanel.java
+│       │               ├── HistoryPanel.java
+│       │               ├── Theme.java
+│       │               └── UIFactory.java
+│
+├── resources/
+│   ├── backgrounds/
+│   │   ├── start.jpg
+│   │   └── end.jpg
+│   └── stories.csv
+  
 ```
 
 ---
