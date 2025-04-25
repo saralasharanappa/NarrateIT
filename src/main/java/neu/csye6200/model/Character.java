@@ -1,9 +1,9 @@
-package org.example;
+package neu.csye6200.model;
 
 import java.io.Serializable;
 import java.util.List;
 
-class Character implements Serializable {
+public class Character implements Serializable {
     private String name;
     private String gender;
     private String role;

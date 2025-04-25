@@ -1,9 +1,11 @@
-package org.example;
+package neu.csye6200.view;
+
+import neu.csye6200.controller.MainWindow;
 
 import javax.swing.*;
 import java.awt.*;
 
-class HistoryPanel extends JPanel {
+public class HistoryPanel extends JPanel {
     MainWindow mainWindow;
     JTextArea historyArea;
     JButton backButton;

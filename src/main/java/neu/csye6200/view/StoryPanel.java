@@ -1,9 +1,13 @@
-package org.example;
+package neu.csye6200.view;
+
+import neu.csye6200.controller.MainWindow;
+import neu.csye6200.model.Chapter;
+import neu.csye6200.model.Decision;
 
 import javax.swing.*;
 import java.awt.*;
 
-class StoryPanel extends JPanel {
+public class StoryPanel extends JPanel {
     MainWindow mainWindow;
     JTextArea storyTextArea;
     JPanel decisionPanel;

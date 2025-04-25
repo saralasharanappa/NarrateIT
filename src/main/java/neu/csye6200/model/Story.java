@@ -1,9 +1,9 @@
-package org.example;
+package neu.csye6200.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-class Story implements Serializable {
+public class Story implements Serializable {
     private ArrayList<Chapter> chapters;
     private int currentChapterIndex;
 

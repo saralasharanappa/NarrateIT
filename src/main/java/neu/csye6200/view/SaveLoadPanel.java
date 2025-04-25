@@ -1,9 +1,11 @@
-package org.example;
+package neu.csye6200.view;
+
+import neu.csye6200.controller.MainWindow;
 
 import javax.swing.*;
 import java.awt.*;
 
-class SaveLoadPanel extends JPanel {
+public class SaveLoadPanel extends JPanel {
     MainWindow mainWindow;
     JButton saveButton;
     JButton loadButton;

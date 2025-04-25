@@ -1,8 +1,8 @@
-package org.example;
+package neu.csye6200.model;
 
 import java.io.Serializable;
 
-class Decision implements Serializable {
+public class Decision implements Serializable {
     private String text;
     private int nextChapterIndex;
 

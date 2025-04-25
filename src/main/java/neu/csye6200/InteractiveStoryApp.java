@@ -1,4 +1,6 @@
-package org.example;
+package neu.csye6200;
+
+import neu.csye6200.controller.MainWindow;
 
 import javax.swing.*;
 import java.net.URISyntaxException;

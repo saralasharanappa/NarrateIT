@@ -1,4 +1,4 @@
-package org.example;
+package neu.csye6200.view;
 
 import javax.swing.*;
 import java.awt.*;
