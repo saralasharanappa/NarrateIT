@@ -1,9 +1,11 @@
-package org.example;
+package neu.csye6200.view;
+
+import neu.csye6200.controller.MainWindow;
 
 import javax.swing.*;
 import java.awt.*;
 
-class MainMenuPanel extends JPanel {
+public class MainMenuPanel extends JPanel {
     MainWindow mainWindow;
     private float alpha = 0.0f; // For fade-in subtitle
     private float starScale = 1.0f; // For pulsing stars

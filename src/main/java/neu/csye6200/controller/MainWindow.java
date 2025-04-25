@@ -1,4 +1,12 @@
-package org.example;
+package neu.csye6200.controller;
+
+
+
+import com.formdev.flatlaf.FlatDarculaLaf;
+import neu.csye6200.model.Chapter;
+import neu.csye6200.model.Decision;
+import neu.csye6200.model.Story;
+import neu.csye6200.view.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,29 +17,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-class MainWindow extends JFrame {
+public class MainWindow extends JFrame {
     CardLayout cardLayout;
     JPanel mainPanel;
     JPanel navBar;
 
     MainMenuPanel mainMenuPanel;
-    StoryPanel storyPanel;
+    public StoryPanel storyPanel;
     CustomizationPanel customizationPanel;
     SaveLoadPanel saveLoadPanel;
     HistoryPanel historyPanel;
 
-    Story story;
-    Character character;
+    public Story story;
+    public neu.csye6200.model.Character character;
     java.util.List<Story> storyList;
-    java.util.List<String> currentGameHistory;
+    public java.util.List<String> currentGameHistory;
     java.util.List<String> overallHistory;
 
+    private boolean isDarkMode = false;
+
     public MainWindow() throws URISyntaxException {
-        // Set FlatLaf for modern UI
         try {
             UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
-            // Uncomment for Dark Mode
-            // UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatDarkLaf());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -44,7 +51,7 @@ class MainWindow extends JFrame {
 
         storyList = createStories();
         story = getRandomStory();
-        character = new Character("Hero", "Male", "Adventurer", new ArrayList<>());
+        character = new neu.csye6200.model.Character("Hero", "Male", "Adventurer", new ArrayList<>());
         currentGameHistory = new ArrayList<>();
         overallHistory = new ArrayList<>();
 
@@ -115,6 +122,10 @@ class MainWindow extends JFrame {
         nav.add(Box.createHorizontalStrut(15));
         nav.add(createStyledNavButton("💾 Save Game", e -> saveGame()));
 
+        // New Theme Toggle Button
+        nav.add(Box.createHorizontalStrut(15));
+        nav.add(createStyledNavButton("🌓 Toggle Theme", e -> toggleTheme()));
+
         return nav;
     }
 
@@ -164,7 +175,7 @@ class MainWindow extends JFrame {
         return stories;
     }
 
-    Story getRandomStory() {
+    public Story getRandomStory() {
         Random rand = new Random();
         int index = rand.nextInt(storyList.size());
         return storyList.get(index);
@@ -225,7 +236,7 @@ class MainWindow extends JFrame {
             FileInputStream fileIn = new FileInputStream("savegame.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
             story = (Story) in.readObject();
-            character = (Character) in.readObject();
+            character = (neu.csye6200.model.Character) in.readObject();
             currentGameHistory = (java.util.List<String>) in.readObject();
             overallHistory = (java.util.List<String>) in.readObject();
             in.close();
@@ -238,4 +249,21 @@ class MainWindow extends JFrame {
             JOptionPane.showMessageDialog(this, "Failed to load game.");
         }
     }
+
+    private void toggleTheme() {
+        try {
+            if (isDarkMode) {
+                UIManager.setLookAndFeel(new com.formdev.flatlaf.FlatLightLaf());
+            } else {
+                UIManager.setLookAndFeel(new FlatDarculaLaf()); // More contrast
+            }
+            isDarkMode = !isDarkMode;
+
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (UnsupportedLookAndFeelException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
 }

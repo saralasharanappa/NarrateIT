@@ -247,4 +247,3 @@ The character’s role affects how the story is narrated (e.g., Warriors receive
 ## License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-

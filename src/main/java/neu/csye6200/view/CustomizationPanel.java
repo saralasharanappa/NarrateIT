@@ -1,10 +1,13 @@
-package org.example;
+package neu.csye6200.view;
+
+
+import neu.csye6200.controller.MainWindow;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-class CustomizationPanel extends JPanel {
+public class CustomizationPanel extends JPanel {
     MainWindow mainWindow;
     JTextField nameField;
     JComboBox<String> genderCombo;

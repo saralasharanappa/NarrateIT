@@ -1,10 +1,10 @@
-package org.example;
+package neu.csye6200.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-class Chapter implements Serializable {
+public class Chapter implements Serializable {
     private String text;
     private List<Decision> decisions;
     private String imagePath;
