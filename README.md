@@ -8,6 +8,7 @@ An immersive Java-based application that lets users explore deep, branching narr
 
 The Interactive Storytelling App enables users to:
 
+
 - Navigate through deep stories with multiple chapters (15 stories with 30 chapters each).
 - Make choices at each chapter that influence the narrative direction.
 - Customize their character’s details and role, which affects how the story is presented.
