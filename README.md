@@ -257,7 +257,7 @@ Edit `stories.csv` to add new stories or chapters. Each story should maintain a 
 # Contributions:
 - **Sarala Sharanappa** – CStoryLoader and CSV integration, chapter rendering, and decision button interactivity.
 - **Rushitaben Pravinbhai Vachhani** – project structuring, backend infra, styles
-- **Amisha Bhawsar** – Frontend UI Framework design: Java Swing
+- **Amisha Bhawsar** – Frontend UI Framework design: Java Swing and Validation 
 
 ---
 
