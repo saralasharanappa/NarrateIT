@@ -193,7 +193,7 @@ storyId,chapterOrder,text,imagePath,decision1Text,decision1Next,decision2Text,de
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/saralasharanappa/NarrateIT.git
+git clone <link>
 cd InteractiveStoryApp
 ```
 
@@ -229,22 +229,30 @@ This allows the file to be correctly loaded from the classpath.
 
 Edit `stories.csv` to add new stories or chapters. Each story should maintain a consistent `storyId`, and each chapter should have a unique `chapterOrder`.
 
-### Character Customization
-
-The character’s role affects how the story is narrated (e.g., Warriors receive strength-based perspectives, Wizards get mystical details).
-
 ---
 
 # Functionalities:
-- Implement story loading from CSV files (15+ stories with 30 chapters each).
-- Display chapter narratives with branching decisions.
-- Character customization (name, gender, role, traits).
-- Dynamic story perspective based on selected character role.
-- Persistent history of completed games.
-- Save/Load functionality using serialization.
-- Navigation via a top-level menu and visual enhancements using images per chapter..
+- Load immersive stories dynamically from CSV files (15+ stories, each with 30 chapters).
+- Interactive narrative progression with **branching decisions** at every chapter.
+- **Character customization**: set name, gender, role (e.g., Warrior, Wizard), and traits.
+- **Real-time theme switching**: Toggle between Light and Dark modes during gameplay.
+- Maintain and view a **persistent history** of all completed adventures.
+- Save/Load entire game progress using **object serialization**.
+- Seamless **navigation** with a modern UI, using top-level menus and chapter-specific images.
+- Visual enhancements include gradient backgrounds and styled decision buttons.
+- **Fallback Story**: Default storyline ensures app runs even without external files.
 
 ---
+
+## Design Patterns Used
+
+| Pattern                | Description                                                                                       | Implementation Area                                                          |
+|---------------------------------|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| **MVC (Model-View-Controller)** | Separates data (Model), UI (View), and business logic (Controller).                      | `MainWindow` (Controller), `StoryPanel` (View), `Story`, `Character` (Model) |
+| **Singleton**                   | Ensures a single instance of specific components for consistent state across the app.    | Potential for shared settings or UI factories (e.g., `UIFactory`)            |
+| **Factory Method**              | Encapsulates object creation for UI elements like buttons, panels with consistent styles.| `UIFactory.createStyledButton()`                                             |
+| **Observer (Minimal)**          | For real-time updates like refreshing UI when the theme or story changes.                | Theme switching, UI updates after load/save                                  |
+| **Serialization**               | Persist object state to allow saving/loading games across sessions.                      | `saveGame()` and `loadGame()` in `MainWindow`                                |
 
 # Contributions:
 - **Sarala Sharanappa** – CStoryLoader and CSV integration, chapter rendering, and decision button interactivity.
