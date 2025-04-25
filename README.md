@@ -1,15 +1,10 @@
-# Project Group Number:
-## Group 01
-
-
-# Project Topic/Name:
-# NarrateIT – Interactive Storytelling App
+# Interactive Storytelling App
 
 An immersive Java-based application that lets users explore deep, branching narratives through an interactive storytelling experience. The app uses external CSV files to load richly detailed stories, allowing for easy updates and expansion of the narrative content.
 
 ---
 
-## Overview
+## 🛍️ Overview
 
 The Interactive Storytelling App enables users to:
 
@@ -20,16 +15,7 @@ The Interactive Storytelling App enables users to:
 
 ---
 
-
-# Object-Oriented Concepts:
-- **Encapsulation** – All classes maintain data privacy using private attributes and public accessors/mutators.
-- **Inheritance** – Can be extended further for different types of stories or characters.
-- **Polymorphism** – UI components and actions respond differently based on the state (e.g., character role affecting narrative).
-- **Abstraction** – Clear separation between UI handling, logic, and data models.
-
----
-
-## Features
+## ✨ Features
 
 - **Deep, Immersive Narratives**  
   15 stories, each with 30 chapters of detailed, engaging narrative text.
@@ -48,113 +34,36 @@ The Interactive Storytelling App enables users to:
 
 ---
 
-## Technology Stack
+## 💠 Technology Stack
 
-- **Language**: Java 8
-- **UI Framework**: Java Swing
-- **CSV Parsing**: OpenCSV
-- **Build Tool**: Maven
-- **Version Control**: Git & GitHub 
+- **Programming Language:** Java 8  
+- **User Interface:** Java Swing (JSwing)  
+- **CSV Parsing:** OpenCSV  
+- **Build Tool:** Maven  
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
-interactive-story-app/
-├── README.md
+InteractiveStoryApp/
+├── pom.xml
 ├── src/
-│   └── main/
-│       ├── java/
-│       │   └── neu/
-│       │       └── csye6200/
-│       │           └── edu/
-│       │               ├── InteractiveStoryApp.java
-│       │               ├── ui/
-│       │               │   ├── MainWindow.java
-│       │               │   ├── MainMenuPanel.java
-│       │               │   ├── StoryPanel.java
-│       │               │   ├── CustomizationPanel.java
-│       │               │   ├── SaveLoadPanel.java
-│       │               │   └── HistoryPanel.java
-│       │               ├── model/
-│       │               │   ├── Story.java
-│       │               │   ├── Chapter.java
-│       │               │   ├── Decision.java
-│       │               │   └── Character.java
-│       │               └── util/
-│       │                   └── StoryLoader.java
-│       └── resources/
-│           ├── backgrounds/
-│           │   ├── start.jpg
-│           │   └── end.jpg
-│           └── stories.csv    
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── org/example/
+│   │   │       ├── InteractiveStoryApp.java
+│   │   │       ├── MainWindow.java
+│   │   │       ├── StoryLoader.java
+│   │   │       ├── Chapter.java
+│   │   │       ├── Decision.java
+│   │   │       └── Character.java
+│   │   └── resources/
+│   │       └── stories.csv
+└── README.md
 ```
 
 ---
-
-## UML Class Diagram – Interactive Storytelling App
-
-```mermaid
-classDiagram
-    class Story {
-        - List~Chapter~ chapters
-        - int currentChapterIndex
-        + getCurrentChapter()
-        + addChapter(Chapter c)
-        + advanceToChapter(int index)
-        + reset()
-    }
-
-    class Chapter {
-        - String text
-        - String imagePath
-        - List~Decision~ decisions
-        + getText()
-        + getImagePath()
-        + getDecisions()
-        + setDecisions(List~Decision~ decisions)
-    }
-
-    class Decision {
-        - String text
-        - int nextChapterIndex
-        + getText()
-        + getNextChapterIndex()
-    }
-
-    class Character {
-        - String name
-        - String gender
-        - String role
-        - List~String~ traits
-        + getName(), setName()
-        + getGender(), setGender()
-        + getRole(), setRole()
-        + getTraits(), setTraits()
-    }
-
-    class MainWindow {
-        - Story story
-        - Character character
-        - List~Story~ storyList
-        - List~String~ currentGameHistory
-        - List~String~ overallHistory
-        + showPanel(String name)
-        + saveGame()
-        + loadGame()
-        + newRandomStory()
-        + finishGame()
-    }
-
-    Story --> Chapter
-    Chapter --> Decision
-    MainWindow --> Story
-    MainWindow --> Character
-```
-
----
-
 
 ## 📄 CSV File Format
 
@@ -179,7 +88,7 @@ storyId,chapterOrder,text,imagePath,decision1Text,decision1Next,decision2Text,de
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### 1. Clone the Repository
 
@@ -199,7 +108,7 @@ mvn clean install
 ### 3. Run the Application
 
 ```bash
-mvn exec:java -Dexec.mainClass="neu.csye6200.InteractiveStoryApp"
+mvn exec:java -Dexec.mainClass="org.example.InteractiveStoryApp"
 ```
 
 ### 4. Verify CSV Placement
@@ -214,37 +123,22 @@ This allows the file to be correctly loaded from the classpath.
 
 ---
 
-## Customization
+## 🔧 Customization
 
-### Story Content
+### 📚 Story Content
 
 Edit `stories.csv` to add new stories or chapters. Each story should maintain a consistent `storyId`, and each chapter should have a unique `chapterOrder`.
 
-### Character Customization
+### 🎝️ Character Customization
 
 The character’s role affects how the story is narrated (e.g., Warriors receive strength-based perspectives, Wizards get mystical details).
 
----
+### 🎨 UI Enhancements
 
-# Functionalities for Milestone 2:
-- Implement story loading from CSV files (15+ stories with 30 chapters each).
-- Display chapter narratives with branching decisions.
-- Character customization (name, gender, role, traits).
-- Dynamic story perspective based on selected character role.
-- Persistent history of completed games.
-- Save/Load functionality using serialization.
-- Navigation via a top-level menu and visual enhancements using images per chapter..
+Modify the Java Swing components in the source code (`MainWindow`, `StoryPanel`, etc.) to change layout, colors, fonts, or interactivity.
 
 ---
 
-# Contributions:
-- **Sarala Sharanappa** – CStoryLoader and CSV integration, chapter rendering, and decision button interactivity.
-- **Rushitaben Pravinbhai Vachhani** – working with Sarala on backend
-- **Amisha Bhawsar** – Frontend UI Framework design: Java Swing
-
----
-
-## License
+## 📜 License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
